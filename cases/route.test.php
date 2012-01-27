@@ -9,6 +9,7 @@ class RouteTest extends PHPUnit_Framework_TestCase {
 	 */
 	public static function tearDownAfterClass()
 	{
+		unset($_SERVER['REQUEST_METHOD']);
 		unset(Filter::$filters['test-after']);
 		unset(Filter::$filters['test-before']);
 	}
@@ -142,6 +143,20 @@ class RouteTest extends PHPUnit_Framework_TestCase {
 
 		$this->assertEquals('Route!', $route->call()->content);
 		$this->assertTrue($_SERVER['test-after']);
+	}
+
+	/**
+	 * Test that the route calls the appropriate controller method when delegating.
+	 *
+	 * @group laravel
+	 */
+	public function testControllerActionCalledWhenDelegating()
+	{
+		$_SERVER['REQUEST_METHOD'] = 'GET';
+
+		$route = new Route('', array('uses' => 'auth@index'));
+
+		$this->assertEquals('action_index', $route->call()->content);
 	}
 
 }
