@@ -17,15 +17,8 @@ class EventTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testListenersAreFiredForEvents()
 	{
-		Event::listen('test.event', function()
-		{
-			return 1;
-		});
-
-		Event::listen('test.event', function()
-		{
-			return 2;
-		});
+		Event::listen('test.event', function() { return 1; });
+		Event::listen('test.event', function() { return 2; });
 
 		$responses = Event::fire('test.event');
 
