@@ -17,4 +17,9 @@ class Auth_Controller extends Controller {
 		return __FUNCTION__;
 	}
 
+	public function action_profile($name)
+	{
+		return $name;
+	}
+
 }

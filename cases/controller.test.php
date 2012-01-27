@@ -26,6 +26,9 @@ class ControllerTest extends PHPUnit_Framework_TestCase {
 	public function testBasicControllerActionCanBeCalled()
 	{
 		$this->assertEquals('action_index', Controller::call('auth@index')->content);
+		$this->assertEquals('Admin_Panel_Index', Controller::call('admin.panel@index')->content);
+		$this->assertEquals('Taylor', Controller::call('auth@profile', array('Taylor'))->content);
+		$this->assertEquals('Dashboard_Panel_Index', Controller::call('dashboard::panel@index')->content);
 	}
 
 }
