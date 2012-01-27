@@ -12,6 +12,7 @@ class RouteTest extends PHPUnit_Framework_TestCase {
 		unset($_SERVER['REQUEST_METHOD']);
 		unset(Filter::$filters['test-after']);
 		unset(Filter::$filters['test-before']);
+		unset(Filter::$filters['test-params']);
 	}
 
 	/**
@@ -157,6 +158,44 @@ class RouteTest extends PHPUnit_Framework_TestCase {
 		$route = new Route('', array('uses' => 'auth@index'));
 
 		$this->assertEquals('action_index', $route->call()->content);
+	}
+
+	/**
+	 * Test that filter parameters are passed to the filter.
+	 *
+	 * @group laravel
+	 */
+	public function testFilterParametersArePassedToFilter()
+	{
+		Filter::register('test-params', function($var1, $var2)
+		{
+			return $var1.$var2;
+		});
+
+		$route = new Route('', array('before' => 'test-params:1,2'));
+
+		$this->assertEquals('12', $route->call()->content);
+	}
+
+	/**
+	 * Test that multiple filters can be assigned to a route.
+	 *
+	 * @group laravel
+	 */
+	public function testMultipleFiltersCanBeAssignedToARoute()
+	{
+		$_SERVER['test-multi-1'] = false;
+		$_SERVER['test-multi-2'] = false;
+
+		Filter::register('test-multi-1', function() { $_SERVER['test-multi-1'] = true; });
+		Filter::register('test-multi-2', function() { $_SERVER['test-multi-2'] = true; });
+
+		$route = new Route('', array('before' => 'test-multi-1|test-multi-2'));
+
+		$route->call();
+
+		$this->assertTrue($_SERVER['test-multi-1']);
+		$this->assertTrue($_SERVER['test-multi-2']);
 	}
 
 }
