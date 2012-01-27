@@ -33,10 +33,10 @@
 |
 */
 
-Router::register(array('GET /', 'GET /home'), function()
+Router::register(array('GET /', 'GET /home'), array('name' => 'home', function()
 {
 	return View::make('home.index');
-});
+}));
 
 /*
 |--------------------------------------------------------------------------

@@ -14,6 +14,20 @@ class RoutingTest extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
+	 * Test the Router::find method.
+	 *
+	 * @group laravel
+	 */
+	public function testNamedRoutesCanBeLocatedByTheRouter()
+	{
+		$home = Router::find('home');
+		$dashboard = Router::find('dashboard');
+
+		$this->assertTrue(isset($home['GET /']));
+		$this->assertTrue(isset($dashboard['GET /dashboard']));
+	}
+
+	/**
 	 * Test the basic routing mechanism.
 	 *
 	 * @group laravel

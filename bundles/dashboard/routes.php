@@ -1,3 +1,6 @@
 <?php
 
-Router::register('GET /dashboard', function() {});
+Router::register('GET /dashboard', array('name' => 'dashboard', function()
+{
+	//
+}));
