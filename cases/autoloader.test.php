@@ -10,10 +10,10 @@ class AutoloaderTest extends PHPUnit_Framework_TestCase {
 	public function testMapsCanBeRegistered()
 	{
 		Autoloader::map(array(
-			'Foo' => APP_PATH.'models/foo.php',
+			'Foo' => $GLOBALS['APP_PATH'].'models/foo.php',
 		));
 
-		$this->assertEquals(APP_PATH.'models/foo.php', Autoloader::$mappings['Foo']);
+		$this->assertEquals($GLOBALS['APP_PATH'].'models/foo.php', Autoloader::$mappings['Foo']);
 	}
 
 	/**
@@ -36,12 +36,12 @@ class AutoloaderTest extends PHPUnit_Framework_TestCase {
 	public function testPsrDirectoriesCanBeRegistered()
 	{
 		Autoloader::psr(array(
-			APP_PATH.'foo'.DS.'bar',
-			APP_PATH.'foo'.DS.'baz'.DS.DS,
+			$GLOBALS['APP_PATH'].'foo'.DS.'bar',
+			$GLOBALS['APP_PATH'].'foo'.DS.'baz'.DS.DS,
 		));
 
-		$this->assertTrue(in_array(APP_PATH.'foo'.DS.'bar'.DS, Autoloader::$psr));
-		$this->assertTrue(in_array(APP_PATH.'foo'.DS.'baz'.DS, Autoloader::$psr));
+		$this->assertTrue(in_array($GLOBALS['APP_PATH'].'foo'.DS.'bar'.DS, Autoloader::$psr));
+		$this->assertTrue(in_array($GLOBALS['APP_PATH'].'foo'.DS.'baz'.DS, Autoloader::$psr));
 	}
 
 	/**
@@ -52,12 +52,12 @@ class AutoloaderTest extends PHPUnit_Framework_TestCase {
 	public function testNamespacesCanBeRegistered()
 	{
 		Autoloader::namespaces(array(
-			'Autoloader_1' => BUNDLE_PATH.'autoload'.DS.'models',
-			'Autoloader_2' => BUNDLE_PATH.'autoload'.DS.'libraries'.DS.DS,
+			'Autoloader_1' => $GLOBALS['BUNDLE_PATH'].'autoload'.DS.'models',
+			'Autoloader_2' => $GLOBALS['BUNDLE_PATH'].'autoload'.DS.'libraries'.DS.DS,
 		));
 
-		$this->assertEquals(BUNDLE_PATH.'autoload'.DS.'models'.DS, Autoloader::$namespaces['Autoloader_1']);
-		$this->assertEquals(BUNDLE_PATH.'autoload'.DS.'libraries'.DS, Autoloader::$namespaces['Autoloader_2']);
+		$this->assertEquals($GLOBALS['BUNDLE_PATH'].'autoload'.DS.'models'.DS, Autoloader::$namespaces['Autoloader_1']);
+		$this->assertEquals($GLOBALS['BUNDLE_PATH'].'autoload'.DS.'libraries'.DS, Autoloader::$namespaces['Autoloader_2']);
 	}
 
 	/**
@@ -79,7 +79,7 @@ class AutoloaderTest extends PHPUnit_Framework_TestCase {
 	public function testHardcodedClassesCanBeLoaded()
 	{
 		Autoloader::map(array(
-			'Autoloader_HardCoded' => APP_PATH.'models'.DS.'autoloader.php',
+			'Autoloader_HardCoded' => $GLOBALS['APP_PATH'].'models'.DS.'autoloader.php',
 		));
 
 		$this->assertInstanceOf('Autoloader_HardCoded', new Autoloader_HardCoded);
@@ -93,7 +93,7 @@ class AutoloaderTest extends PHPUnit_Framework_TestCase {
 	public function testClassesMappedByNamespaceCanBeLoaded()
 	{
 		Autoloader::namespaces(array(
-			'Dashboard' => BUNDLE_PATH.'dashboard'.DS.'models',
+			'Dashboard' => $GLOBALS['BUNDLE_PATH'].'dashboard'.DS.'models',
 		));
 
 		$this->assertInstanceOf('Dashboard\\Repository', new Dashboard\Repository);
