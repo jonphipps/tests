@@ -9,6 +9,7 @@ class RouteTest extends PHPUnit_Framework_TestCase {
 	 */
 	public static function tearDownAfterClass()
 	{
+		unset(Filter::$filters['test-after']);
 		unset(Filter::$filters['test-before']);
 	}
 
@@ -82,6 +83,11 @@ class RouteTest extends PHPUnit_Framework_TestCase {
 		$this->assertInstanceOf('Laravel\\Response', $route->call());
 	}
 
+	/**
+	 * Test that calling a route calls the global before and after filters.
+	 *
+	 * @group laravel
+	 */
 	public function testCallingARouteCallsTheBeforeAndAfterFilters()
 	{
 		$route = new Route('', array(function() { return 'Hi!'; }));
@@ -112,6 +118,30 @@ class RouteTest extends PHPUnit_Framework_TestCase {
 		}));
 
 		$this->assertEquals('Filtered!', $route->call()->content);
+	}
+
+	/**
+	 * Test that after filters do not affect the route response.
+	 *
+	 * @group laravel
+	 */
+	public function testAfterFilterDoesNotAffectTheResponse()
+	{
+		$_SERVER['test-after'] = false;
+
+		Filter::register('test-after', function()
+		{
+			$_SERVER['test-after'] = true;
+			return 'Filtered!';
+		});
+
+		$route = new Route('', array('after' => 'test-after', function()
+		{
+			return 'Route!';
+		}));
+
+		$this->assertEquals('Route!', $route->call()->content);
+		$this->assertTrue($_SERVER['test-after']);
 	}
 
 }
