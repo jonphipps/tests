@@ -160,6 +160,11 @@ class ControllerTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('12', Controller::call('filter@edit')->content);
 	}
 
+	/**
+	 * Test that multiple filters can be assigned to a single method.
+	 *
+	 * @group laravel
+	 */
 	public function testMultipleFiltersCanBeAssignedToAnAction()
 	{
 		$_SERVER['test-multi-1'] = false;
@@ -169,6 +174,50 @@ class ControllerTest extends PHPUnit_Framework_TestCase {
 
 		$this->assertTrue($_SERVER['test-multi-1']);
 		$this->assertTrue($_SERVER['test-multi-2']);
+	}
+
+	/**
+	 * Test Restful controllers respond by request method.
+	 *
+	 * @group laravel
+	 */
+	public function testRestfulControllersRespondWithRestfulMethods()
+	{
+		$_SERVER['REQUEST_METHOD'] = 'GET';
+
+		$this->assertEquals('get_index', Controller::call('restful@index')->content);
+
+		$_SERVER['REQUEST_METHOD'] = 'PUT';
+
+		$this->assertEquals(404, Controller::call('restful@index')->status);
+
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+
+		$this->assertEquals('post_index', Controller::call('restful@index')->content);
+	}
+
+	/**
+	 * Test that the template is returned by template controllers.
+	 *
+	 * @group laravel
+	 */
+	public function testTemplateControllersReturnTheTemplate()
+	{
+		$response = Controller::call('template.basic@index');
+
+		$home = file_get_contents(APP_PATH.'views/home/index.php');
+
+		$this->assertEquals($home, $response->content);
+	}
+
+	/**
+	 * Test that the "layout" method is called on the controller.
+	 *
+	 * @group laravel
+	 */
+	public function testTheTemplateCanBeOverriden()
+	{
+		$this->assertEquals('Layout', Controller::call('template.override@index')->content);
 	}
 
 }
