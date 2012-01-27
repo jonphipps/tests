@@ -68,12 +68,12 @@ Router::register(array('GET /', 'GET /home'), array('name' => 'home', function()
 
 Filter::register('before', function()
 {
-	// Do stuff before every request to your application...
+	$_SERVER['before'] = true;
 });
 
 Filter::register('after', function()
 {
-	// Do stuff after every request to your application...
+	$_SERVER['after'] = true;
 });
 
 Filter::register('csrf', function()
