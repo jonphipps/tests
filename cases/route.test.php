@@ -13,6 +13,8 @@ class RouteTest extends PHPUnit_Framework_TestCase {
 		unset(Filter::$filters['test-after']);
 		unset(Filter::$filters['test-before']);
 		unset(Filter::$filters['test-params']);
+		unset(Filter::$filters['test-multi-1']);
+		unset(Filter::$filters['test-multi-2']);
 	}
 
 	/**
