@@ -54,12 +54,14 @@ class RoutingTest extends PHPUnit_Framework_TestCase {
 
 		$this->assertNull(Router::route('GET', 'user/1.5'));
 		$this->assertNull(Router::route('GET', 'user/taylor'));
+		$this->assertEquals(array(25), Router::route('GET', 'user/25')->parameters);
 		$this->assertEquals('GET /user/(:num)', Router::route('GET', 'user/1')->key);
 
 		$this->assertNull(Router::route('GET', 'profile/1/otwell'));
 		$this->assertNull(Router::route('POST', 'profile/taylor/1'));
 		$this->assertNull(Router::route('GET', 'profile/taylor/otwell'));
 		$this->assertNull(Router::route('GET', 'profile/taylor/1/otwell'));
+		$this->assertEquals(array('taylor', 25), Router::route('GET', 'profile/taylor/25')->parameters);
 		$this->assertEquals('GET /profile/(:any)/(:num)', Router::route('GET', 'profile/taylor/1')->key);
 	}
 
@@ -75,12 +77,14 @@ class RoutingTest extends PHPUnit_Framework_TestCase {
 
 		$this->assertNull(Router::route('GET', 'user/taylor'));
 		$this->assertEquals('GET /user/(:num?)', Router::route('GET', 'user')->key);
+		$this->assertEquals(array(25), Router::route('GET', 'user/25')->parameters);
 		$this->assertEquals('GET /user/(:num?)', Router::route('GET', 'user/1')->key);
 
 		$this->assertNull(Router::route('GET', 'profile/taylor/otwell/test'));
 		$this->assertEquals('GET /profile/(:any)/(:any?)', Router::route('GET', 'profile/taylor')->key);
 		$this->assertEquals('GET /profile/(:any)/(:any?)', Router::route('GET', 'profile/taylor/25')->key);
 		$this->assertEquals('GET /profile/(:any)/(:any?)', Router::route('GET', 'profile/taylor/otwell')->key);
+		$this->assertEquals(array('taylor', 'otwell'), Router::route('GET', 'profile/taylor/otwell')->parameters);
 	}
 
 	/**
