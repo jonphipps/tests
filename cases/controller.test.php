@@ -205,7 +205,7 @@ class ControllerTest extends PHPUnit_Framework_TestCase {
 	{
 		$response = Controller::call('template.basic@index');
 
-		$home = file_get_contents($GLOBALS['APP_PATH'].'views/home/index.php');
+		$home = file_get_contents(path('app').'views/home/index.php');
 
 		$this->assertEquals($home, $response->content);
 	}
