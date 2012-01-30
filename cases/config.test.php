@@ -62,4 +62,18 @@ class ConfigTest extends PHPUnit_Framework_TestCase {
 		unset($_SERVER['LARAVEL_ENV']);
 	}
 
+	/**
+	 * Test that items can be set after the entire file has already been loaded.
+	 *
+	 * @group laravel
+	 */
+	public function testItemsCanBeSetAfterEntireFileIsLoaded()
+	{
+		Config::get('application');
+		Config::set('application.key', 'taylor');
+		$application = Config::get('application');
+
+		$this->assertEquals('taylor', $application['key']);
+	}
+
 }

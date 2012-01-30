@@ -184,7 +184,7 @@ class AssetTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testPathMethodReturnsCorrectPathForABundleAsset()
 	{
-		Config::$cache['application.url'] = 'http://localhost';
+		Config::set('application.url', 'http://localhost');
 
 		$container = $this->getContainer();
 
@@ -200,7 +200,7 @@ class AssetTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testPathMethodReturnsCorrectPathForAnApplicationAsset()
 	{
-		Config::$cache['application.url'] = 'http://localhost';
+		Config::set('application.url', 'http://localhost');
 
 		$container = $this->getContainer();
 
