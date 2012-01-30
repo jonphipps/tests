@@ -220,4 +220,27 @@ class ControllerTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('Layout', Controller::call('template.override@index')->content);
 	}
 
+	/**
+	 * Test the Controller::resolve method.
+	 *
+	 * @group laravel
+	 */
+	public function testResolveMethodChecksTheIoCContainer()
+	{
+		IoC::controller('home', function()
+		{
+			require_once path('app').'controllers/home.php';
+
+			$controller = new Home_Controller;
+
+			$controller->foo = 'bar';
+
+			return $controller;
+		});
+
+		$controller = Controller::resolve(DEFAULT_BUNDLE, 'home');
+
+		$this->assertEquals('bar', $controller->foo);
+	}
+
 }
