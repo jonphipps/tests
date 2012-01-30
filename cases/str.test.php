@@ -91,9 +91,9 @@ class StrTest extends PHPUnit_Framework_TestCase {
 	public function testStringsCanBeSingularOrPlural()
 	{
 		$this->assertEquals('user', Str::singular('users'));
-		$this->assertEquals('user', Str::singular('USERS'));
 		$this->assertEquals('users', Str::plural('user'));
-		$this->assertEquals('users', Str::plural('USER'));
+		$this->assertEquals('User', Str::singular('Users'));
+		$this->assertEquals('Users', Str::plural('User'));
 		$this->assertEquals('user', Str::plural('user', 1));
 		$this->assertEquals('users', Str::plural('user', 2));
 	}
