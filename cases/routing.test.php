@@ -7,6 +7,15 @@ class RoutingTest extends PHPUnit_Framework_TestCase {
 	/**
 	 * Destroy the testing environment.
 	 */
+	public function setUp()
+	{
+		Router::$names = array();
+		Router::$routes = array();
+	}
+
+	/**
+	 * Destroy the testing environment.
+	 */
 	public function tearDown()
 	{
 		Router::$names = array();
@@ -20,6 +29,9 @@ class RoutingTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testNamedRoutesCanBeLocatedByTheRouter()
 	{
+		Router::register('GET /', array('name' => 'home'));
+		Router::register('GET /dashboard', array('name' => 'dashboard'));
+
 		$home = Router::find('home');
 		$dashboard = Router::find('dashboard');
 
