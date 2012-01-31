@@ -439,7 +439,7 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 		$input = array('code' => 'AR');
 		$this->assertFalse(Validator::make($input, $rules)->valid());
 
-		$rules = array('code' => 'unique:validation_unique,code,AR');
+		$rules = array('code' => 'unique:validation_unique,code,AR,code');
 		$this->assertTrue(Validator::make($input, $rules)->valid());
 	}
 

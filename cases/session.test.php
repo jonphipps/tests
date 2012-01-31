@@ -195,6 +195,169 @@ class SessionTest extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
+	 * Test the Payload::forget method.
+	 *
+	 * @group laravel
+	 */
+	public function testSessionDataCanBeForgotten()
+	{
+		$payload = $this->getPayload();
+
+		$payload->session = $this->getSession();
+
+		$this->assertTrue(isset($payload->session['data']['name']));
+		$payload->forget('name');
+		$this->assertFalse(isset($payload->session['data']['name']));
+	}
+
+	/**
+	 * Test the Payload::flush method.
+	 *
+	 * @group laravel
+	 */
+	public function testFlushMaintainsTokenButDeletesEverythingElse()
+	{
+		$payload = $this->getPayload();
+
+		$payload->session = $this->getSession();
+
+		$this->assertTrue(isset($payload->session['data']['name']));
+		$payload->flush();
+		$this->assertFalse(isset($payload->session['data']['name']));
+		$this->assertEquals('bar', $payload->session['data']['csrf_token']);
+		$this->assertEquals(array(), $payload->session['data'][':new:']);
+		$this->assertEquals(array(), $payload->session['data'][':old:']);
+	}
+
+	/**
+	 * Test the Payload::regenerate method.
+	 *
+	 * @group laravel
+	 */
+	public function testRegenerateMethodSetsNewIDAndTurnsOffExistenceIndicator()
+	{
+		$payload = $this->getPayload();
+
+		$payload->sesion = $this->getSession();
+		$payload->exists = true;
+		$payload->regenerate();
+
+		$this->assertFalse($payload->exists);
+		$this->assertTrue(strlen($payload->session['id']) == 40);
+	}
+
+	/**
+	 * Test the Payload::token method.
+	 *
+	 * @group laravel
+	 */
+	public function testTokenMethodReturnsCSRFToken()
+	{
+		$payload = $this->getPayload();
+		$payload->session = $this->getSession();
+
+		$this->assertEquals('bar', $payload->token());
+	}
+
+	/**
+	 * Test the Payload::save method.
+	 *
+	 * @group laravel
+	 */
+	public function testSaveMethodCorrectlyCallsDriver()
+	{
+		$payload = $this->getPayload();
+		$session = $this->getSession();
+		$payload->session = $session;
+		$payload->exists = true;
+		$config = Laravel\Config::get('session');
+
+		$expect = $session;
+		$expect['data'][':old:'] = $session['data'][':new:'];
+		$expect['data'][':new:'] = array();
+
+		$payload->driver->expects($this->once())
+						->method('save')
+						->with($this->equalTo($expect), $this->equalTo($config), $this->equalTo(true));
+
+		$payload->save();
+
+		$this->assertEquals($session['data'][':new:'], $payload->session['data'][':old:']);
+	}
+
+	/**
+	 * Test the Payload::save method.
+	 *
+	 * @group laravel
+	 */
+	public function testSaveMethodSweepsIfSweeperAndOddsHitWithTimeGreaterThanThreshold()
+	{
+		Config::set('session.sweepage', array(100, 100));
+
+		$payload = $this->getPayload();
+		$payload->driver = $this->getMock('Laravel\\Session\\Drivers\\File', array('save', 'sweep'), array(null));
+		$payload->session = $this->getSession();
+
+		$expiration = time() - (Config::get('session.lifetime') * 60);
+
+		// Here we set the time to the expected expiration minus 5 seconds, just to
+		// allow plenty of room for PHP execution. In the next test, we'll do the
+		// same thing except add 5 seconds to check that the time is between a
+		// given window.
+		$payload->driver->expects($this->once())
+						->method('sweep')
+						->with($this->greaterThan($expiration - 5));
+
+		$payload->save();
+
+		Config::set('session.sweepage', array(2, 100));
+	}
+
+	/**
+	 * Test the Payload::save method.
+	 *
+	 * @group laravel
+	 */
+	public function testSaveMethodSweepsIfSweeperAndOddsHitWithTimeLessThanThreshold()
+	{
+		Config::set('session.sweepage', array(100, 100));
+
+		$payload = $this->getPayload();
+		$payload->driver = $this->getMock('Laravel\\Session\\Drivers\\File', array('save', 'sweep'), array(null));
+		$payload->session = $this->getSession();
+
+		$expiration = time() - (Config::get('session.lifetime') * 60);
+
+		$payload->driver->expects($this->once())
+						->method('sweep')
+						->with($this->lessThan($expiration + 5));
+
+		$payload->save();
+
+		Config::set('session.sweepage', array(2, 100));
+	}
+
+	/**
+	 * Test that the session sweeper is never called if not a sweeper.
+	 *
+	 * @group laravel
+	 */
+	public function testSweeperShouldntBeCalledIfDriverIsntSweeper()
+	{
+		Config::set('session.sweepage', array(100, 100));
+
+		$payload = $this->getPayload();
+		$payload->driver = $this->getMock('Laravel\\Session\\Drivers\\APC', array('save', 'sweep'), array(), '', false);
+		$payload->session = $this->getSession();
+
+		$payload->driver->expects($this->never())->method('sweep');
+
+		$payload->save();
+
+		Config::set('session.sweepage', array(2, 100));
+	}
+
+	/**
 	 * Get a session payload instance.
 	 *
 	 * @return Payload
