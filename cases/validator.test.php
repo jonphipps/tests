@@ -26,7 +26,7 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testRequiredRule()
 	{
-		$input = $this->getInput();
+		$input = array('name' => 'Taylor Otwell');
 		$rules = array('name' => 'required');
 		$this->assertTrue(Validator::make($input, $rules)->valid());
 
@@ -455,6 +455,7 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 		$this->assertTrue(Validator::make($input, $rules)->valid());
 
 		$input['code'] = array('TX', 'NY');
+		$rules = array('code' => 'exists:validation_unique,code');
 		$this->assertTrue(Validator::make($input, $rules)->valid());
 
 		$input['code'] = array('TX', 'XX');
@@ -465,17 +466,125 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * Get a generic input array.
+	 * Test that the validator sets the correct messages.
 	 *
-	 * @return array
+	 * @group laravel
 	 */
-	protected function getInput()
+	public function testCorrectMessagesAreSet()
 	{
-		return array(
-			'name'  => 'Taylor Otwell',
-			'age'   => 25,
-			'email' => 'example@gmail.com',
-		);
+		$lang = require path('app').'language/en/validation.php';
+	
+		$input = array('email' => 'example-foo');
+		$rules = array('name' => 'required', 'email' => 'required|email');
+		$v = Validator::make($input, $rules);
+		$v->valid();
+		$messages = $v->errors;
+		$this->assertInstanceOf('Laravel\\Messages', $messages);
+		$this->assertEquals(str_replace(':attribute', 'name', $lang['required']), $messages->first('name'));
+		$this->assertEquals(str_replace(':attribute', 'email', $lang['email']), $messages->first('email'));
+	}
+
+	/**
+	 * Test that size replacements are made on messages.
+	 *
+	 * @group laravel
+	 */
+	public function testNumericSizeReplacementsAreMade()
+	{
+		$lang = require path('app').'language/en/validation.php';
+		
+		$input = array('amount' => 100);
+		$rules = array('amount' => 'numeric|size:80');
+		$v = Validator::make($input, $rules);
+		$v->valid();
+		$this->assertEquals(str_replace(array(':attribute', ':size'), array('amount', '80'), $lang['size']['numeric']), $v->errors->first('amount'));
+
+		$rules = array('amount' => 'numeric|between:70,80');
+		$v = Validator::make($input, $rules);
+		$v->valid();
+		$expect = str_replace(array(':attribute', ':min', ':max'), array('amount', '70', '80'), $lang['between']['numeric']);
+		$this->assertEquals($expect, $v->errors->first('amount'));
+
+		$rules = array('amount' => 'numeric|min:120');
+		$v = Validator::make($input, $rules);
+		$v->valid();
+		$expect = str_replace(array(':attribute', ':min'), array('amount', '120'), $lang['min']['numeric']);
+		$this->assertEquals($expect, $v->errors->first('amount'));
+
+		$rules = array('amount' => 'numeric|max:20');
+		$v = Validator::make($input, $rules);
+		$v->valid();
+		$expect = str_replace(array(':attribute', ':max'), array('amount', '20'), $lang['max']['numeric']);
+		$this->assertEquals($expect, $v->errors->first('amount'));
+	}
+
+	/**
+	 * Test that string size replacements are made on messages.
+	 *
+	 * @group laravel
+	 */
+	public function testStringSizeReplacementsAreMade()
+	{
+		$lang = require path('app').'language/en/validation.php';
+		
+		$input = array('amount' => '100');
+		$rules = array('amount' => 'size:80');
+		$v = Validator::make($input, $rules);
+		$v->valid();
+		$this->assertEquals(str_replace(array(':attribute', ':size'), array('amount', '80'), $lang['size']['string']), $v->errors->first('amount'));
+
+		$rules = array('amount' => 'between:70,80');
+		$v = Validator::make($input, $rules);
+		$v->valid();
+		$expect = str_replace(array(':attribute', ':min', ':max'), array('amount', '70', '80'), $lang['between']['string']);
+		$this->assertEquals($expect, $v->errors->first('amount'));
+
+		$rules = array('amount' => 'min:120');
+		$v = Validator::make($input, $rules);
+		$v->valid();
+		$expect = str_replace(array(':attribute', ':min'), array('amount', '120'), $lang['min']['string']);
+		$this->assertEquals($expect, $v->errors->first('amount'));
+
+		$rules = array('amount' => 'max:2');
+		$v = Validator::make($input, $rules);
+		$v->valid();
+		$expect = str_replace(array(':attribute', ':max'), array('amount', '2'), $lang['max']['string']);
+		$this->assertEquals($expect, $v->errors->first('amount'));
+	}
+
+	/**
+	 * Test that string size replacements are made on messages.
+	 *
+	 * @group laravel
+	 */
+	public function testFileSizeReplacementsAreMade()
+	{
+		$lang = require path('app').'language/en/validation.php';
+		
+		$_FILES['amount']['tmp_name'] = 'foo';
+		$_FILES['amount']['size'] = 10000;
+		$rules = array('amount' => 'size:80');
+		$v = Validator::make($_FILES, $rules);
+		$v->valid();
+		$this->assertEquals(str_replace(array(':attribute', ':size'), array('amount', '80'), $lang['size']['file']), $v->errors->first('amount'));
+
+		$rules = array('amount' => 'between:70,80');
+		$v = Validator::make($_FILES, $rules);
+		$v->valid();
+		$expect = str_replace(array(':attribute', ':min', ':max'), array('amount', '70', '80'), $lang['between']['file']);
+		$this->assertEquals($expect, $v->errors->first('amount'));
+
+		$rules = array('amount' => 'min:120');
+		$v = Validator::make($_FILES, $rules);
+		$v->valid();
+		$expect = str_replace(array(':attribute', ':min'), array('amount', '120'), $lang['min']['file']);
+		$this->assertEquals($expect, $v->errors->first('amount'));
+
+		$rules = array('amount' => 'max:2');
+		$v = Validator::make($_FILES, $rules);
+		$v->valid();
+		$expect = str_replace(array(':attribute', ':max'), array('amount', '2'), $lang['max']['file']);
+		$this->assertEquals($expect, $v->errors->first('amount'));
 	}
 
 }
