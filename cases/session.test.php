@@ -369,6 +369,14 @@ class SessionTest extends PHPUnit_Framework_TestCase {
 		$payload->save();
 
 		$this->assertTrue(isset(Cookie::$jar[Config::get('session.cookie')]));
+
+		$cookie = Cookie::$jar[Config::get('session.cookie')];
+
+		$this->assertEquals('foo', $cookie['value']);
+		$this->assertEquals(Config::get('session.lifetime'), $cookie['minutes']);
+		$this->assertEquals(Config::get('session.domain'), $cookie['domain']);
+		$this->assertEquals(Config::get('session.path'), $cookie['path']);
+		$this->assertEquals(Config::get('session.secure'), $cookie['secure']);
 	}
 
 	/**
