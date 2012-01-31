@@ -39,7 +39,7 @@ class ResponseTest extends PHPUnit_Framework_TestCase {
 		$response = Response::error('404', array('name' => 'Taylor'));
 
 		$this->assertEquals(404, $response->status);
-		$this->assertEquals('error/404', $response->content->view);
+		$this->assertEquals('error.404', $response->content->view);
 		$this->assertEquals('Taylor', $response->content->data['name']);
 	}
 
