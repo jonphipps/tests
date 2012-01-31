@@ -358,6 +358,20 @@ class SessionTest extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
+	 * Test the Payload::save method.
+	 *
+	 * @group laravel
+	 */
+	public function testSaveMethodSetsCookieWithCorrectValues()
+	{
+		$payload = $this->getPayload();
+		$payload->session = $this->getSession();
+		$payload->save();
+
+		$this->assertTrue(isset(Cookie::$jar[Config::get('session.cookie')]));
+	}
+
+	/**
 	 * Get a session payload instance.
 	 *
 	 * @return Payload
