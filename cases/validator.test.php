@@ -3,10 +3,19 @@
 class ValidatorTest extends PHPUnit_Framework_TestCase {
 
 	/**
+	 * Setup the test environment.
+	 */
+	public function setUp()
+	{
+		Config::set('database.default', 'sqlite');
+	}
+
+	/**
 	 * Tear down the test environment.
 	 */
 	public function tearDown()
 	{
+		Config::set('database.default', 'mysql');
 		$_FILES = array();
 	}
 
@@ -414,6 +423,45 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 
 		$rules['file'] = 'mimes:txt,bmp';
 		$this->assertFalse(Validator::make($_FILES, $rules)->valid());
+	}
+
+	/**
+	 * Test the unique validation rule.
+	 *
+	 * @group laravel
+	 */
+	public function testUniqueRule()
+	{
+		$input = array('code' => 'ZZ');
+		$rules = array('code' => 'unique:validation_unique');
+		$this->assertTrue(Validator::make($input, $rules)->valid());
+
+		$input = array('code' => 'AR');
+		$this->assertFalse(Validator::make($input, $rules)->valid());
+
+		$rules = array('code' => 'unique:validation_unique,code,AR');
+		$this->assertTrue(Validator::make($input, $rules)->valid());
+	}
+
+	/**
+	 * Tests the exists validation rule.
+	 *
+	 * @group laravel
+	 */
+	public function testExistsRule()
+	{
+		$input = array('code' => 'TX');
+		$rules = array('code' => 'exists:validation_unique');
+		$this->assertTrue(Validator::make($input, $rules)->valid());
+
+		$input['code'] = array('TX', 'NY');
+		$this->assertTrue(Validator::make($input, $rules)->valid());
+
+		$input['code'] = array('TX', 'XX');
+		$this->assertFalse(Validator::make($input, $rules)->valid());
+
+		$input['code'] = 'XX';
+		$this->assertFalse(Validator::make($input, $rules)->valid());
 	}
 
 	/**
