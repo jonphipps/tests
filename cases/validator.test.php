@@ -587,4 +587,22 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($expect, $v->errors->first('amount'));
 	}
 
+	/**
+	 * Test that values get replaced in messages.
+	 *
+	 * @group laravel
+	 */
+	public function testValuesGetReplaced()
+	{
+		$lang = require path('app').'language/en/validation.php';
+
+		$_FILES['file']['tmp_name'] = path('storage').'files/desert.jpg';
+		$rules = array('file' => 'mimes:php,txt');
+		$v = Validator::make($_FILES, $rules);
+		$v->valid();
+
+		$expect = str_replace(array(':attribute', ':values'), array('file', 'php, txt'), $lang['mimes']);
+		$this->assertEquals($expect, $v->errors->first('file'));
+	}
+
 }
