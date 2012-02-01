@@ -53,4 +53,16 @@ class LangTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($line, Lang::line('validation.required', array('attribute' => 'e-mail'))->get());
 	}
 
+	/**
+	 * Test the Lang::has method.
+	 *
+	 * @group laravel
+	 */
+	public function testHasMethodIndicatesIfLangaugeLineExists()
+	{
+		$this->assertTrue(Lang::has('validation'));
+		$this->assertTrue(Lang::has('validation.required'));
+		$this->assertFalse(Lang::has('validation.foo'));
+	}
+
 }
