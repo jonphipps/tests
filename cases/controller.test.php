@@ -211,6 +211,24 @@ class ControllerTest extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
+	 * Test that controller templates can be named views.
+	 *
+	 * @group laravel
+	 */
+	public function testControllerTemplatesCanBeNamedViews()
+	{
+		View::name('home.index', 'home');
+
+		$response = Controller::call('template.named@index');
+
+		$home = file_get_contents(path('app').'views/home/index.php');
+
+		$this->assertEquals($home, $response->content);
+
+		View::$names = array();
+	}
+
+	/**
 	 * Test that the "layout" method is called on the controller.
 	 *
 	 * @group laravel
