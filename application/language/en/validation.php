@@ -72,7 +72,11 @@ return array(
 	|
 	*/
 
-	'custom' => array(),
+	'custom' => array(
+
+		'custom_required' => 'This field is required!',
+
+	),
 
 	/*
 	|--------------------------------------------------------------------------

@@ -485,6 +485,32 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
+	 * Test that custom messages are recognized.
+	 *
+	 * @group laravel
+	 */
+	public function testCustomMessagesAreRecognize()
+	{
+		$messages = array('required' => 'Required!');
+		$rules = array('name' => 'required');
+		$v = Validator::make(array(), $rules, $messages);
+		$v->valid();
+		$this->assertEquals('Required!', $v->errors->first('name'));
+
+		$messages['email_required'] = 'Email Required!';
+		$rules = array('name' => 'required', 'email' => 'required');
+		$v = Validator::make(array(), $rules, $messages);
+		$v->valid();
+		$this->assertEquals('Required!', $v->errors->first('name'));
+		$this->assertEquals('Email Required!', $v->errors->first('email'));
+
+		$rules = array('custom' => 'required');
+		$v = Validator::make(array(), $rules);
+		$v->valid();
+		$this->assertEquals('This field is required!', $v->errors->first('custom'));
+	}
+
+	/**
 	 * Test that size replacements are made on messages.
 	 *
 	 * @group laravel
