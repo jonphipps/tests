@@ -1,8 +1,19 @@
-<?php
+<?php namespace Laravel;
 
-use Laravel\Cookie;
+/**
+ * Stub the global setcookie method into the Laravel namespace.
+ */
+function setcookie($name, $value, $time, $path, $domain, $secure)
+{
+	$_SERVER['cookie.stub'][$name] = compact('name', 'value', 'time', 'path', 'domain', 'secure');
+}
 
-class CookieTest extends PHPUnit_Framework_TestCase {
+function headers_sent()
+{
+	return $_SERVER['function.headers_sent'];
+}
+
+class CookieTest extends \PHPUnit_Framework_TestCase {
 
 	/**
 	 * Setup the test environment.
@@ -96,6 +107,34 @@ class CookieTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('path', Cookie::$jar['bar']['path']);
 		$this->assertEquals('domain', Cookie::$jar['bar']['domain']);
 		$this->assertTrue(Cookie::$jar['bar']['secure']);
+	}
+
+	/**
+	 * Test the Cookie::send method.
+	 *
+	 * @group laravel
+	 */
+	public function testSendMethodSetsProperValuesOnCookie()
+	{
+		$_SERVER['cookie.stub'] = array();
+		$_SERVER['function.headers_sent'] = false;
+
+		Cookie::send();
+		$this->assertTrue(count($_SERVER['cookie.stub']) == 0);
+
+		Cookie::put('foo', 'bar', 20, 'path', 'domain', true);
+		Cookie::send();
+		$this->assertTrue(count($_SERVER['cookie.stub']) == 1);
+		$this->assertEquals('foo', $_SERVER['cookie.stub']['foo']['name']);
+		$this->assertEquals(Cookie::sign('foo', 'bar'), $_SERVER['cookie.stub']['foo']['value']);
+		$this->assertEquals('path', $_SERVER['cookie.stub']['foo']['path']);
+		$this->assertEquals('domain', $_SERVER['cookie.stub']['foo']['domain']);
+		$this->assertEquals((time() + (20 * 60)), $_SERVER['cookie.stub']['foo']['time']);
+		$this->assertTrue($_SERVER['cookie.stub']['foo']['secure']);
+
+		Cookie::put('bar', 'baz', 0);
+		Cookie::send();
+		$this->assertEquals(0, $_SERVER['cookie.stub']['bar']['time']);
 	}
 
 }
