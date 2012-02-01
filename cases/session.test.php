@@ -380,6 +380,18 @@ class SessionTest extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
+	 * Test the Session::activity method.
+	 *
+	 * @group laravel
+	 */
+	public function testActivityMethodReturnsLastActivity()
+	{
+		$payload = $this->getPayload();
+		$payload->session['last_activity'] = 10;
+		$this->assertEquals(10, $payload->activity());
+	}
+
+	/**
 	 * Get a session payload instance.
 	 *
 	 * @return Payload
