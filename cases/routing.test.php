@@ -137,4 +137,22 @@ class RoutingTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('dashboard::panel@show', Router::route('GET', 'dashboard/panel/show')->action['uses']);
 	}
 
+	/**
+	 * Test foreign characters can be used in routes.
+	 *
+	 * @group laravel
+	 */
+	public function testForeignCharsInRoutes()
+	{
+		Router::register('GET /'.urlencode('مدرس_رياضيات').'/(:any)', function() {});
+		Router::register('GET /'.urlencode('مدرس_رياضيات'), function() {});
+		Router::register('GET /'.urlencode('ÇœŪ'), function() {});
+		Router::register('GET /'.urlencode('私は料理が大好き'), function() {});
+
+		$this->assertEquals(array('مدرس_رياضيات'), Router::route('GET', urlencode('مدرس_رياضيات').'/'.urlencode('مدرس_رياضيات'))->parameters);
+		$this->assertEquals('GET /'.urlencode('مدرس_رياضيات'), Router::route('GET', urlencode('مدرس_رياضيات'))->key);
+		$this->assertEquals('GET /'.urlencode('ÇœŪ'), Router::route('GET', urlencode('ÇœŪ'))->key);
+		$this->assertEquals('GET /'.urlencode('私は料理が大好き'), Router::route('GET', urlencode('私は料理が大好き'))->key);
+	}
+
 }
