@@ -91,6 +91,6 @@ return array(
 	|
 	*/
 
-	'attributes' => array(),
+	'attributes' => array('test_attribute' => 'attribute'),
 
 );

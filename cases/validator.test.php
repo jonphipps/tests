@@ -62,6 +62,24 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
+	 * Test the different validation rule.
+	 *
+	 * @group laravel
+	 */
+	public function testTheDifferentRule()
+	{
+		$input = array('password' => 'foo', 'password_confirmation' => 'bar');
+		$rules = array('password' => 'different:password_confirmation');
+		$this->assertTrue(Validator::make($input, $rules)->valid());
+
+		$input['password_confirmation'] = 'foo';
+		$this->assertFalse(Validator::make($input, $rules)->valid());
+
+		unset($input['password_confirmation']);
+		$this->assertFalse(Validator::make($input, $rules)->valid());
+	}
+
+	/**
 	 * Test the accepted validation rule.
 	 *
 	 * @group laravel
@@ -629,6 +647,23 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 
 		$expect = str_replace(array(':attribute', ':values'), array('file', 'php, txt'), $lang['mimes']);
 		$this->assertEquals($expect, $v->errors->first('file'));
+	}
+
+	/**
+	 * Test custom attribute names are replaced.
+	 *
+	 * @group laravel
+	 */
+	public function testCustomAttributesAreReplaced()
+	{
+		$lang = require path('app').'language/en/validation.php';
+
+		$rules = array('test_attribute' => 'required');
+		$v = Validator::make(array(), $rules);
+		$v->valid();
+
+		$expect = str_replace(':attribute', 'attribute', $lang['required']);
+		$this->assertEquals($expect, $v->errors->first('test_attribute'));
 	}
 
 }
