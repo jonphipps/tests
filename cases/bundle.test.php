@@ -39,7 +39,7 @@ class BundleTest extends PHPUnit_Framework_TestCase {
 		Bundle::register('foo-baz', array('location' => 'test/foo-baz', 'auto' => true, 'handles' => 'foo-baz'));
 		$this->assertEquals(path('bundle').'test/foo-baz'.DS, Bundle::$bundles['foo-baz']['location']);
 		$this->assertTrue(Bundle::$bundles['foo-baz']['auto']);
-		$this->assertEquals('foo-baz', Bundle::$bundles['foo-baz']['handles']);
+		$this->assertEquals('foo-baz/', Bundle::$bundles['foo-baz']['handles']);
 
 		unset(Bundle::$bundles['foo-bar']);
 		unset(Bundle::$bundles['foo-baz']);

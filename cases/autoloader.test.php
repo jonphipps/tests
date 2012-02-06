@@ -56,8 +56,8 @@ class AutoloaderTest extends PHPUnit_Framework_TestCase {
 			'Autoloader_2' => path('bundle').'autoload'.DS.'libraries'.DS.DS,
 		));
 
-		$this->assertEquals(path('bundle').'autoload'.DS.'models'.DS, Autoloader::$namespaces['Autoloader_1']);
-		$this->assertEquals(path('bundle').'autoload'.DS.'libraries'.DS, Autoloader::$namespaces['Autoloader_2']);
+		$this->assertEquals(path('bundle').'autoload'.DS.'models'.DS, Autoloader::$namespaces['Autoloader_1\\']);
+		$this->assertEquals(path('bundle').'autoload'.DS.'libraries'.DS, Autoloader::$namespaces['Autoloader_2\\']);
 	}
 
 	/**

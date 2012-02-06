@@ -9,6 +9,7 @@ class RoutingTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function setUp()
 	{
+		Bundle::$started = array();
 		Router::$names = array();
 		Router::$routes = array();
 	}
@@ -18,6 +19,7 @@ class RoutingTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function tearDown()
 	{
+		Bundle::$started = array();
 		Router::$names = array();
 		Router::$routes = array();
 	}
@@ -106,9 +108,7 @@ class RoutingTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testBasicRouteToControllerIsRouted()
 	{
-		$this->assertEquals('home@index', Router::route('GET', '/')->action['uses']);
 		$this->assertEquals('auth@index', Router::route('GET', 'auth')->action['uses']);
-		$this->assertEquals('home@index', Router::route('GET', 'home')->action['uses']);
 		$this->assertEquals('home@index', Router::route('GET', 'home/index')->action['uses']);
 		$this->assertEquals('home@profile', Router::route('GET', 'home/profile')->action['uses']);
 		$this->assertEquals('admin.panel@index', Router::route('GET', 'admin/panel')->action['uses']);
