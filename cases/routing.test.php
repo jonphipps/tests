@@ -10,6 +10,7 @@ class RoutingTest extends PHPUnit_Framework_TestCase {
 	public function setUp()
 	{
 		Bundle::$started = array();
+		Bundle::$routed = array();
 		Router::$names = array();
 		Router::$routes = array();
 	}
@@ -20,6 +21,7 @@ class RoutingTest extends PHPUnit_Framework_TestCase {
 	public function tearDown()
 	{
 		Bundle::$started = array();
+		Bundle::$routed = array();
 		Router::$names = array();
 		Router::$routes = array();
 	}
