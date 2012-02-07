@@ -1,3 +1,6 @@
 <?php
 
-$_SERVER['bundle.dummy.routes']++;
+if (isset($_SERVER['bundle.dummy.routes']))
+{
+	$_SERVER['bundle.dummy.routes']++;
+}

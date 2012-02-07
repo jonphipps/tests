@@ -10,7 +10,6 @@ class BundleTest extends PHPUnit_Framework_TestCase {
 		Bundle::$started = array();
 		Bundle::$elements = array();
 		unset(Bundle::$bundles['foo']);
-		unset(Bundle::$bundles['dummy']);
 	}
 
 	/**
@@ -21,7 +20,16 @@ class BundleTest extends PHPUnit_Framework_TestCase {
 		Bundle::$started = array();
 		Bundle::$elements = array();
 		unset(Bundle::$bundles['foo']);
-		unset(Bundle::$bundles['dummy']);
+	}
+
+	public function testDetectMethodProperlyDetectsBundles()
+	{
+		@unlink(path('storage').'cache/laravel.bundle.manifest');
+		$bundles = Bundle::detect(path('bundle'));
+
+		$this->assertTrue(isset($bundles['dashboard']));
+		$this->assertTrue(isset($bundles['dummy']));
+		$this->assertEquals(path('bundle').'dashboard'.DS, $bundles['dashboard']['location']);
 	}
 
 	/**
@@ -31,18 +39,16 @@ class BundleTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testRegisterMethodCorrectlyRegistersBundle()
 	{
-		Bundle::register('foo-bar', array());
-		$this->assertEquals(path('bundle').'foo-bar'.DS, Bundle::$bundles['foo-bar']['location']);
-		$this->assertFalse(Bundle::$bundles['foo-bar']['auto']);
+		Bundle::register(array('name' => 'foo-baz', 'handles' => 'foo-baz'));
+		$this->assertEquals('foo-baz/', Bundle::$bundles['foo-baz']['handles']);
+		$this->assertFalse(Bundle::$bundles['foo-baz']['auto']);
+
+		Bundle::register(array('name' => 'foo-bar'));
+		$this->assertFalse(Bundle::$bundles['foo-baz']['auto']);
 		$this->assertNull(Bundle::$bundles['foo-bar']['handles']);
 
-		Bundle::register('foo-baz', array('location' => 'test/foo-baz', 'auto' => true, 'handles' => 'foo-baz'));
-		$this->assertEquals(path('bundle').'test/foo-baz'.DS, Bundle::$bundles['foo-baz']['location']);
-		$this->assertTrue(Bundle::$bundles['foo-baz']['auto']);
-		$this->assertEquals('foo-baz/', Bundle::$bundles['foo-baz']['handles']);
-
-		unset(Bundle::$bundles['foo-bar']);
 		unset(Bundle::$bundles['foo-baz']);
+		unset(Bundle::$bundles['foo-bar']);
 	}
 
 	/**
@@ -62,7 +68,7 @@ class BundleTest extends PHPUnit_Framework_TestCase {
 			$_SERVER['started.dummy'] = true;
 		});
 
-		Bundle::register('dummy');
+		Bundle::register(array('name' => 'dummy', 'location' => path('bundle').DS.'dummy'.DS));
 		Bundle::start('dummy');
 
 		$this->assertTrue($_SERVER['started.dummy']);
@@ -82,7 +88,7 @@ class BundleTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testHandlesMethodReturnsBundleThatHandlesURI()
 	{
-		Bundle::register('foo', array('handles' => 'foo-bar'));
+		Bundle::register(array('name' => 'foo', 'handles' => 'foo-bar'));
 		$this->assertEquals('foo', Bundle::handles('foo-bar/admin'));
 		unset(Bundle::$bundles['foo']);
 	}
@@ -105,9 +111,8 @@ class BundleTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testStartedMethodIndicatesIfBundleIsStarted()
 	{
-		Bundle::register('dummy');
+		Bundle::register(array('name' => 'dummy', 'location' => path('bundle').DS.'dummy'.DS));
 		Bundle::start('dummy');
-
 		$this->assertTrue(Bundle::started('dummy'));
 	}
 
@@ -237,7 +242,7 @@ class BundleTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testAllMethodReturnsBundleArray()
 	{
-		Bundle::register('foo');
+		Bundle::register(array('name' => 'foo'));
 		$this->assertEquals(Bundle::$bundles, Bundle::all());
 		unset(Bundle::$bundles['foo']);
 	}
@@ -249,8 +254,8 @@ class BundleTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testNamesMethodReturnsBundleNames()
 	{
-		Bundle::register('foo');
-		$this->assertEquals(array('dashboard', 'foo'), Bundle::names());
+		Bundle::register(array('name' => 'foo'));
+		$this->assertEquals(array('dashboard', 'dummy', 'foo'), Bundle::names());
 		unset(Bundle::$bundles['foo']);
 	}
 

@@ -100,18 +100,26 @@ return array(
 
 	/*
 	|--------------------------------------------------------------------------
-	| Autoloaded Bundles
+	| Bundle Options
 	|--------------------------------------------------------------------------
 	|
-	| Bundles can provide a ton of awesome drop-in functionality for your web
-	| application. Everything from Twitter integration to an admin backend.
+	| Here you may specify options related to application bundles, such as the
+	| amount of time the bundle manifest is cached. Each option is detailed
+	| below with suggestions for sensible values.
 	|
-	| Here you may specify the bundles that should be automatically started
-	| on every request to your application.
+	| Cache:
+	|
+	| All bundles have a "bundle.info" file which contains information such
+	| as the name of a bundle and the URIs it responds to. This value is
+	| the number of that bundle info is cached.
 	|
 	*/
 
-	'bundles' => array(),
+	'bundle' => array(
+
+		'cache' => 0,
+
+	),
 
 	/*
 	|--------------------------------------------------------------------------
