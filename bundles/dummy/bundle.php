@@ -1,3 +1,3 @@
 <?php
 
-$_SERVER['bundle.dummy.start']++;
+return array('name' => 'dummy');
