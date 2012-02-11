@@ -33,10 +33,16 @@
 |
 */
 
-Router::register(array('GET /', 'GET /home'), array('name' => 'home', function()
+Route::get('/, home', array('name' => 'home', function()
 {
 	return View::make('home.index');
 }));
+
+Route::controller(array(
+	'auth', 'filter', 'home', 'restful',
+	'template.basic', 'template.name', 'template.override',
+	'admin.panel',
+));
 
 /*
 |--------------------------------------------------------------------------

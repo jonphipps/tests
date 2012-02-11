@@ -33,8 +33,8 @@ class RoutingTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testNamedRoutesCanBeLocatedByTheRouter()
 	{
-		Router::register('GET /', array('name' => 'home'));
-		Router::register('GET /dashboard', array('name' => 'dashboard'));
+		Route::get('/', array('name' => 'home'));
+		Route::get('dashboard', array('name' => 'dashboard'));
 
 		$home = Router::find('home');
 		$dashboard = Router::find('dashboard');
@@ -50,12 +50,12 @@ class RoutingTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testBasicRouteCanBeRouted()
 	{
-		Router::register('GET /', function() {});
-		Router::register(array('GET /home', 'GET /main'), function() {});
+		Route::get('/', function() {});
+		Route::get('home, main', function() {});
 
-		$this->assertEquals('GET /', Router::route('GET', '/')->key);
-		$this->assertEquals('GET /home', Router::route('GET', '/home')->key);
-		$this->assertEquals('GET /main', Router::route('GET', '/main')->key);
+		$this->assertEquals('/', Router::route('GET', '/')->uri);
+		$this->assertEquals('home', Router::route('GET', 'home')->uri);
+		$this->assertEquals('main', Router::route('GET', 'main')->uri);
 	}
 
 	/**
@@ -65,20 +65,20 @@ class RoutingTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testWildcardRoutesCanBeRouted()
 	{
-		Router::register('GET /user/(:num)', function() {});
-		Router::register('GET /profile/(:any)/(:num)', function() {});
+		Route::get('user/(:num)', function() {});
+		Route::get('profile/(:any)/(:num)', function() {});
 
 		$this->assertNull(Router::route('GET', 'user/1.5'));
 		$this->assertNull(Router::route('GET', 'user/taylor'));
 		$this->assertEquals(array(25), Router::route('GET', 'user/25')->parameters);
-		$this->assertEquals('GET /user/(:num)', Router::route('GET', 'user/1')->key);
+		$this->assertEquals('user/(:num)', Router::route('GET', 'user/1')->uri);
 
 		$this->assertNull(Router::route('GET', 'profile/1/otwell'));
 		$this->assertNull(Router::route('POST', 'profile/taylor/1'));
 		$this->assertNull(Router::route('GET', 'profile/taylor/otwell'));
 		$this->assertNull(Router::route('GET', 'profile/taylor/1/otwell'));
 		$this->assertEquals(array('taylor', 25), Router::route('GET', 'profile/taylor/25')->parameters);
-		$this->assertEquals('GET /profile/(:any)/(:num)', Router::route('GET', 'profile/taylor/1')->key);
+		$this->assertEquals('profile/(:any)/(:num)', Router::route('GET', 'profile/taylor/1')->uri);
 	}
 
 	/**
@@ -88,18 +88,18 @@ class RoutingTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testOptionalWildcardsCanBeRouted()
 	{
-		Router::register('GET /user/(:num?)', function() {});
-		Router::register('GET /profile/(:any)/(:any?)', function() {});
+		Route::get('user/(:num?)', function() {});
+		Route::get('profile/(:any)/(:any?)', function() {});
 
 		$this->assertNull(Router::route('GET', 'user/taylor'));
-		$this->assertEquals('GET /user/(:num?)', Router::route('GET', 'user')->key);
+		$this->assertEquals('user/(:num?)', Router::route('GET', 'user')->uri);
 		$this->assertEquals(array(25), Router::route('GET', 'user/25')->parameters);
-		$this->assertEquals('GET /user/(:num?)', Router::route('GET', 'user/1')->key);
+		$this->assertEquals('user/(:num?)', Router::route('GET', 'user/1')->uri);
 
 		$this->assertNull(Router::route('GET', 'profile/taylor/otwell/test'));
-		$this->assertEquals('GET /profile/(:any)/(:any?)', Router::route('GET', 'profile/taylor')->key);
-		$this->assertEquals('GET /profile/(:any)/(:any?)', Router::route('GET', 'profile/taylor/25')->key);
-		$this->assertEquals('GET /profile/(:any)/(:any?)', Router::route('GET', 'profile/taylor/otwell')->key);
+		$this->assertEquals('profile/(:any)/(:any?)', Router::route('GET', 'profile/taylor')->uri);
+		$this->assertEquals('profile/(:any)/(:any?)', Router::route('GET', 'profile/taylor/25')->uri);
+		$this->assertEquals('profile/(:any)/(:any?)', Router::route('GET', 'profile/taylor/otwell')->uri);
 		$this->assertEquals(array('taylor', 'otwell'), Router::route('GET', 'profile/taylor/otwell')->parameters);
 	}
 
@@ -125,7 +125,7 @@ class RoutingTest extends PHPUnit_Framework_TestCase {
 	public function testRoutesToBundlesCanBeResolved()
 	{
 		$this->assertNull(Router::route('GET', 'dashboard/foo'));
-		$this->assertEquals('GET /dashboard', Router::route('GET', 'dashboard')->key);
+		$this->assertEquals('dashboard', Router::route('GET', 'dashboard')->uri);
 	}
 
 	/**
@@ -146,15 +146,15 @@ class RoutingTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testForeignCharsInRoutes()
 	{
-		Router::register('GET /'.urlencode('مدرس_رياضيات').'/(:any)', function() {});
-		Router::register('GET /'.urlencode('مدرس_رياضيات'), function() {});
-		Router::register('GET /'.urlencode('ÇœŪ'), function() {});
-		Router::register('GET /'.urlencode('私は料理が大好き'), function() {});
+		Route::get(urlencode('مدرس_رياضيات').'/(:any)', function() {});
+		Route::get(urlencode('مدرس_رياضيات'), function() {});
+		Route::get(urlencode('ÇœŪ'), function() {});
+		Route::get(urlencode('私は料理が大好き'), function() {});
 
 		$this->assertEquals(array('مدرس_رياضيات'), Router::route('GET', urlencode('مدرس_رياضيات').'/'.urlencode('مدرس_رياضيات'))->parameters);
-		$this->assertEquals('GET /'.urlencode('مدرس_رياضيات'), Router::route('GET', urlencode('مدرس_رياضيات'))->key);
-		$this->assertEquals('GET /'.urlencode('ÇœŪ'), Router::route('GET', urlencode('ÇœŪ'))->key);
-		$this->assertEquals('GET /'.urlencode('私は料理が大好き'), Router::route('GET', urlencode('私は料理が大好き'))->key);
+		$this->assertEquals(urlencode('مدرس_رياضيات'), Router::route('GET', urlencode('مدرس_رياضيات'))->uri);
+		$this->assertEquals(urlencode('ÇœŪ'), Router::route('GET', urlencode('ÇœŪ'))->uri);
+		$this->assertEquals(urlencode('私は料理が大好き'), Router::route('GET', urlencode('私は料理が大好き'))->uri);
 	}
 
 }

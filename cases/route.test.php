@@ -26,37 +26,13 @@ class RouteTest extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * Tests the Route::handles method.
-	 *
-	 * @group laravel
-	 */
-	public function testHandlesIndicatesIfTheRouteHandlesAGivenURI()
-	{
-		$route = new Route('GET /', array('handles' => array('GET /foo/bar')));
-
-		$this->assertTrue($route->handles('foo/*'));
-		$this->assertTrue($route->handles('foo/bar'));
-		$this->assertFalse($route->handles('/'));
-		$this->assertFalse($route->handles('baz'));
-		$this->assertFalse($route->handles('/foo'));
-		$this->assertFalse($route->handles('foo'));
-
-		$route = new Route('GET /', array('handles' => array('GET /', 'GET /home')));
-
-		$this->assertTrue($route->handles('/'));
-		$this->assertTrue($route->handles('home'));
-		$this->assertFalse($route->handles('foo'));
-	}
-
-	/**
 	 * Tests the Route::is method.
 	 *
 	 * @group laravel
 	 */
 	public function testIsMethodIndicatesIfTheRouteHasAGivenName()
 	{
-		$route = new Route('GET /', array('name' => 'profile'));
-
+		$route = new Route('GET', '/', array('name' => 'profile'));
 		$this->assertTrue($route->is('profile'));
 		$this->assertFalse($route->is('something'));
 	}
@@ -68,7 +44,7 @@ class RouteTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testBasicRoutesCanBeExecutedProperly()
 	{
-		$route = new Route('', array(function() { return 'Route!'; }));
+		$route = new Route('GET', '', array(function() { return 'Route!'; }));
 
 		$this->assertEquals('Route!', $route->call()->content);
 		$this->assertInstanceOf('Laravel\\Response', $route->call());
@@ -81,7 +57,7 @@ class RouteTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testRouteParametersArePassedIntoTheHandler()
 	{
-		$route = new Route('', array(function($var) { return $var; }), array('Taylor'));
+		$route = new Route('GET', '', array(function($var) { return $var; }), array('Taylor'));
 
 		$this->assertEquals('Taylor', $route->call()->content);
 		$this->assertInstanceOf('Laravel\\Response', $route->call());
@@ -94,7 +70,7 @@ class RouteTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testCallingARouteCallsTheBeforeAndAfterFilters()
 	{
-		$route = new Route('', array(function() { return 'Hi!'; }));
+		$route = new Route('GET', '', array(function() { return 'Hi!'; }));
 
 		$_SERVER['before'] = false;
 		$_SERVER['after'] = false;
@@ -117,7 +93,7 @@ class RouteTest extends PHPUnit_Framework_TestCase {
 			return 'Filtered!';
 		});
 
-		$route = new Route('', array('before' => 'test-before', function() {
+		$route = new Route('GET', '', array('before' => 'test-before', function() {
 			return 'Route!';
 		}));
 
@@ -139,7 +115,7 @@ class RouteTest extends PHPUnit_Framework_TestCase {
 			return 'Filtered!';
 		});
 
-		$route = new Route('', array('after' => 'test-after', function()
+		$route = new Route('GET', '', array('after' => 'test-after', function()
 		{
 			return 'Route!';
 		}));
@@ -157,7 +133,7 @@ class RouteTest extends PHPUnit_Framework_TestCase {
 	{
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 
-		$route = new Route('', array('uses' => 'auth@index'));
+		$route = new Route('GET', '', array('uses' => 'auth@index'));
 
 		$this->assertEquals('action_index', $route->call()->content);
 	}
@@ -174,7 +150,7 @@ class RouteTest extends PHPUnit_Framework_TestCase {
 			return $var1.$var2;
 		});
 
-		$route = new Route('', array('before' => 'test-params:1,2'));
+		$route = new Route('GET', '', array('before' => 'test-params:1,2'));
 
 		$this->assertEquals('12', $route->call()->content);
 	}
@@ -192,7 +168,7 @@ class RouteTest extends PHPUnit_Framework_TestCase {
 		Filter::register('test-multi-1', function() { $_SERVER['test-multi-1'] = true; });
 		Filter::register('test-multi-2', function() { $_SERVER['test-multi-2'] = true; });
 
-		$route = new Route('', array('before' => 'test-multi-1|test-multi-2'));
+		$route = new Route('GET', '', array('before' => 'test-multi-1|test-multi-2'));
 
 		$route->call();
 

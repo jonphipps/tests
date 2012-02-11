@@ -1,6 +1,8 @@
 <?php
 
-Router::register('GET /dashboard', array('name' => 'dashboard', function()
+Route::get('dashboard', array('name' => 'dashboard', function()
 {
 	//
 }));
+
+Route::controller('panel');
