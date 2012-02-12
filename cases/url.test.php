@@ -52,8 +52,11 @@ class URLTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testToActionMethodGeneratesURLToControllerAction()
 	{
-		$this->assertEquals('http://localhost/index.php/home/index/', URL::to_action('home@index'));
+		Route::get('foo/bar/(:any?)', 'foo@baz');
+		$this->assertEquals('http://localhost/index.php/home/index', URL::to_action('home@index'));
 		$this->assertEquals('http://localhost/index.php/home/index/Taylor', URL::to_action('home@index', array('Taylor')));
+		$this->assertEquals('http://localhost/index.php/foo/bar', URL::to_action('foo@baz'));
+		$this->assertEquals('http://localhost/index.php/foo/bar/Taylor', URL::to_action('foo@baz', array('Taylor')));
 	}
 
 	/**
@@ -83,12 +86,13 @@ class URLTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testToRouteMethodGeneratesURLsToRoutes()
 	{
-		Router::register('GET /url/test', array('name' => 'url-test'));
-		Router::register('GET /url/test/(:any)/(:any?)', array('name' => 'url-test-2'));
+		Route::get('url/test', array('name' => 'url-test'));
+		Route::get('url/test/(:any)/(:any?)', array('name' => 'url-test-2'));
+		Route::get('url/secure/(:any)/(:any?)', array('name' => 'url-test-3', 'https' => true));
 
 		$this->assertEquals('http://localhost/index.php/url/test', URL::to_route('url-test'));
-		$this->assertEquals('https://localhost/index.php/url/test', URL::to_route('url-test', array(), true));
 		$this->assertEquals('http://localhost/index.php/url/test/taylor', URL::to_route('url-test-2', array('taylor')));
+		$this->assertEquals('https://localhost/index.php/url/secure/taylor', URL::to_route('url-test-3', array('taylor')));
 		$this->assertEquals('http://localhost/index.php/url/test/taylor/otwell', URL::to_route('url-test-2', array('taylor', 'otwell')));
 	}
 

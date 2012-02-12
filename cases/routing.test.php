@@ -39,8 +39,8 @@ class RoutingTest extends PHPUnit_Framework_TestCase {
 		$home = Router::find('home');
 		$dashboard = Router::find('dashboard');
 
-		$this->assertTrue(isset($home['GET /']));
-		$this->assertTrue(isset($dashboard['GET /dashboard']));
+		$this->assertTrue(isset($home['/']));
+		$this->assertTrue(isset($dashboard['dashboard']));
 	}
 
 	/**
@@ -110,11 +110,11 @@ class RoutingTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testBasicRouteToControllerIsRouted()
 	{
-		$this->assertEquals('auth@index', Router::route('GET', 'auth')->action['uses']);
-		$this->assertEquals('home@index', Router::route('GET', 'home/index')->action['uses']);
-		$this->assertEquals('home@profile', Router::route('GET', 'home/profile')->action['uses']);
-		$this->assertEquals('admin.panel@index', Router::route('GET', 'admin/panel')->action['uses']);
-		$this->assertEquals('admin.panel@show', Router::route('GET', 'admin/panel/show')->action['uses']);
+		$this->assertEquals('auth@(:1)', Router::route('GET', 'auth')->action['uses']);
+		$this->assertEquals('home@(:1)', Router::route('GET', 'home/index')->action['uses']);
+		$this->assertEquals('home@(:1)', Router::route('GET', 'home/profile')->action['uses']);
+		$this->assertEquals('admin.panel@(:1)', Router::route('GET', 'admin/panel')->action['uses']);
+		$this->assertEquals('admin.panel@(:1)', Router::route('GET', 'admin/panel/show')->action['uses']);
 	}
 
 	/**
@@ -135,8 +135,8 @@ class RoutingTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testBundleControllersCanBeResolved()
 	{
-		$this->assertEquals('dashboard::panel@index', Router::route('GET', 'dashboard/panel')->action['uses']);
-		$this->assertEquals('dashboard::panel@show', Router::route('GET', 'dashboard/panel/show')->action['uses']);
+		$this->assertEquals('dashboard::panel@(:1)', Router::route('GET', 'dashboard/panel')->action['uses']);
+		$this->assertEquals('dashboard::panel@(:1)', Router::route('GET', 'dashboard/panel/show')->action['uses']);
 	}
 
 	/**
@@ -151,7 +151,7 @@ class RoutingTest extends PHPUnit_Framework_TestCase {
 		Route::get(urlencode('ÇœŪ'), function() {});
 		Route::get(urlencode('私は料理が大好き'), function() {});
 
-		$this->assertEquals(array('مدرس_رياضيات'), Router::route('GET', urlencode('مدرس_رياضيات').'/'.urlencode('مدرس_رياضيات'))->parameters);
+		$this->assertEquals(array(urlencode('مدرس_رياضيات')), Router::route('GET', urlencode('مدرس_رياضيات').'/'.urlencode('مدرس_رياضيات'))->parameters);
 		$this->assertEquals(urlencode('مدرس_رياضيات'), Router::route('GET', urlencode('مدرس_رياضيات'))->uri);
 		$this->assertEquals(urlencode('ÇœŪ'), Router::route('GET', urlencode('ÇœŪ'))->uri);
 		$this->assertEquals(urlencode('私は料理が大好き'), Router::route('GET', urlencode('私は料理が大好き'))->uri);

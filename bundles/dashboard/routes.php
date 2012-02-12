@@ -5,4 +5,4 @@ Route::get('dashboard', array('name' => 'dashboard', function()
 	//
 }));
 
-Route::controller('panel');
+Route::controller('dashboard::panel');
