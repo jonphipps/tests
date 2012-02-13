@@ -33,7 +33,7 @@
 |
 */
 
-Route::get('/, home', array('name' => 'home', function()
+Route::get('/, home', array('as' => 'home', function()
 {
 	return View::make('home.index');
 }));

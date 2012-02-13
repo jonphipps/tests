@@ -33,8 +33,8 @@ class RoutingTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testNamedRoutesCanBeLocatedByTheRouter()
 	{
-		Route::get('/', array('name' => 'home'));
-		Route::get('dashboard', array('name' => 'dashboard'));
+		Route::get('/', array('as' => 'home'));
+		Route::get('dashboard', array('as' => 'dashboard'));
 
 		$home = Router::find('home');
 		$dashboard = Router::find('dashboard');

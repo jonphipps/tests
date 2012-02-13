@@ -32,7 +32,7 @@ class RouteTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testIsMethodIndicatesIfTheRouteHasAGivenName()
 	{
-		$route = new Route('GET', '/', array('name' => 'profile'));
+		$route = new Route('GET', '/', array('as' => 'profile'));
 		$this->assertTrue($route->is('profile'));
 		$this->assertFalse($route->is('something'));
 	}

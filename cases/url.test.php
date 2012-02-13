@@ -92,9 +92,9 @@ class URLTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testToRouteMethodGeneratesURLsToRoutes()
 	{
-		Route::get('url/test', array('name' => 'url-test'));
-		Route::get('url/test/(:any)/(:any?)', array('name' => 'url-test-2'));
-		Route::get('url/secure/(:any)/(:any?)', array('name' => 'url-test-3', 'https' => true));
+		Route::get('url/test', array('as' => 'url-test'));
+		Route::get('url/test/(:any)/(:any?)', array('as' => 'url-test-2'));
+		Route::get('url/secure/(:any)/(:any?)', array('as' => 'url-test-3', 'https' => true));
 
 		$this->assertEquals('http://localhost/index.php/url/test', URL::to_route('url-test'));
 		$this->assertEquals('http://localhost/index.php/url/test/taylor', URL::to_route('url-test-2', array('taylor')));

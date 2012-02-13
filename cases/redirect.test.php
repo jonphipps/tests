@@ -60,9 +60,9 @@ class RedirectTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testRedirectsCanBeGeneratedForNamedRoutes()
 	{
-		Route::get('redirect', array('name' => 'redirect'));
-		Route::get('redirect/(:any)/(:any)', array('name' => 'redirect-2'));
-		Route::get('secure/redirect', array('https' => true, 'name' => 'redirect-3'));
+		Route::get('redirect', array('as' => 'redirect'));
+		Route::get('redirect/(:any)/(:any)', array('as' => 'redirect-2'));
+		Route::get('secure/redirect', array('https' => true, 'as' => 'redirect-3'));
 
 		$this->assertEquals(301, Redirect::to_route('redirect', array(), 301, true)->status);
 		$this->assertEquals('http://localhost/redirect', Redirect::to_route('redirect')->headers['Location']);
