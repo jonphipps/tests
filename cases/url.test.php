@@ -9,6 +9,10 @@ class URLTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function setUp()
 	{
+		Router::$routes = array();
+		Router::$names = array();
+		Router::$uses = array();
+		Router::$fallback = array();
 		Config::set('application.url', 'http://localhost');
 	}
 
@@ -18,8 +22,10 @@ class URLTest extends PHPUnit_Framework_TestCase {
 	public function tearDown()
 	{
 		$_SERVER = array();
-		Router::$names = array();
 		Router::$routes = array();
+		Router::$names = array();
+		Router::$uses = array();
+		Router::$fallback = array();
 		Config::set('application.ssl', true);
 		Config::set('application.url', '');
 		Config::set('application.index', 'index.php');
@@ -53,8 +59,8 @@ class URLTest extends PHPUnit_Framework_TestCase {
 	public function testToActionMethodGeneratesURLToControllerAction()
 	{
 		Route::get('foo/bar/(:any?)', 'foo@baz');
-		$this->assertEquals('http://localhost/index.php/home/index', URL::to_action('home@index'));
-		$this->assertEquals('http://localhost/index.php/home/index/Taylor', URL::to_action('home@index', array('Taylor')));
+		$this->assertEquals('http://localhost/index.php/x/y', URL::to_action('x@y'));
+		$this->assertEquals('http://localhost/index.php/x/y/Taylor', URL::to_action('x@y', array('Taylor')));
 		$this->assertEquals('http://localhost/index.php/foo/bar', URL::to_action('foo@baz'));
 		$this->assertEquals('http://localhost/index.php/foo/bar/Taylor', URL::to_action('foo@baz', array('Taylor')));
 	}
