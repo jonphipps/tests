@@ -29,13 +29,13 @@ class AutoloaderTest extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * Test the Autoloader::psr method.
+	 * Test the Autoloader::directories method.
 	 *
 	 * @group laravel
 	 */
 	public function testPsrDirectoriesCanBeRegistered()
 	{
-		Autoloader::psr(array(
+		Autoloader::directories(array(
 			path('app').'foo'.DS.'bar',
 			path('app').'foo'.DS.'baz'.DS.DS,
 		));

@@ -15,7 +15,7 @@
 |
 */
 
-Autoloader::psr(array(
+Autoloader::directories(array(
 	path('app').'models',
 	path('app').'libraries',
 ));
