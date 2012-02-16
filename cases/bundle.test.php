@@ -53,7 +53,7 @@ class BundleTest extends PHPUnit_Framework_TestCase {
 
 		$_SERVER['started.dummy'] = false;
 
-		Event::listen('started: dummy', function()
+		Event::listen('laravel.started: dummy', function()
 		{
 			$_SERVER['started.dummy'] = true;
 		});
