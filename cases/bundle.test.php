@@ -135,6 +135,7 @@ class BundleTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testPathMethodReturnsCorrectPath()
 	{
+		$this->assertEquals(path('app'), Bundle::path(null));
 		$this->assertEquals(path('app'), Bundle::path(DEFAULT_BUNDLE));
 		$this->assertEquals(path('bundle').'dashboard'.DS, Bundle::path('dashboard'));
 	}
