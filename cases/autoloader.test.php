@@ -40,8 +40,8 @@ class AutoloaderTest extends PHPUnit_Framework_TestCase {
 			path('app').'foo'.DS.'baz'.DS.DS,
 		));
 
-		$this->assertTrue(in_array(path('app').'foo'.DS.'bar'.DS, Autoloader::$psr));
-		$this->assertTrue(in_array(path('app').'foo'.DS.'baz'.DS, Autoloader::$psr));
+		$this->assertTrue(in_array(path('app').'foo'.DS.'bar'.DS, Autoloader::$directories));
+		$this->assertTrue(in_array(path('app').'foo'.DS.'baz'.DS, Autoloader::$directories));
 	}
 
 	/**
