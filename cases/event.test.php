@@ -7,7 +7,7 @@ class EventTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function tearDown()
 	{
-		Event::$events = array();
+		unset(Event::$events['test.event']);
 	}
 
 	/**

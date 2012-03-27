@@ -408,7 +408,11 @@ class SessionTest extends PHPUnit_Framework_TestCase {
 	 */
 	protected function getMockDriver()
 	{
-		return $this->getMock('Laravel\\Session\\Drivers\\Driver');
+		$mock = $this->getMock('Laravel\\Session\\Drivers\\Driver', array('id', 'load', 'save', 'delete'));
+
+		$mock->expects($this->any())->method('id')->will($this->returnValue(Str::random(40)));
+
+		return $mock;
 	}
 
 	/**

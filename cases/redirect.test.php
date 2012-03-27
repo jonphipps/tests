@@ -40,17 +40,17 @@ class RedirectTest extends PHPUnit_Framework_TestCase {
 		$redirect = Redirect::to('user/profile');
 
 		$this->assertEquals(302, $redirect->status);
-		$this->assertEquals('http://localhost/user/profile', $redirect->headers['Location']);
+		$this->assertEquals('http://localhost/user/profile', $redirect->headers['location']);
 
 		$redirect = Redirect::to('user/profile', 301, true);
 
 		$this->assertEquals(301, $redirect->status);
-		$this->assertEquals('https://localhost/user/profile', $redirect->headers['Location']);
+		$this->assertEquals('https://localhost/user/profile', $redirect->headers['location']);
 
 		$redirect = Redirect::to_secure('user/profile', 301);
 
 		$this->assertEquals(301, $redirect->status);
-		$this->assertEquals('https://localhost/user/profile', $redirect->headers['Location']);
+		$this->assertEquals('https://localhost/user/profile', $redirect->headers['location']);
 	}
 
 	/**
@@ -65,9 +65,9 @@ class RedirectTest extends PHPUnit_Framework_TestCase {
 		Route::get('secure/redirect', array('https' => true, 'as' => 'redirect-3'));
 
 		$this->assertEquals(301, Redirect::to_route('redirect', array(), 301, true)->status);
-		$this->assertEquals('http://localhost/redirect', Redirect::to_route('redirect')->headers['Location']);
-		$this->assertEquals('https://localhost/secure/redirect', Redirect::to_route('redirect-3', array(), 302)->headers['Location']);
-		$this->assertEquals('http://localhost/redirect/1/2', Redirect::to_route('redirect-2', array('1', '2'))->headers['Location']);
+		$this->assertEquals('http://localhost/redirect', Redirect::to_route('redirect')->headers['location']);
+		$this->assertEquals('https://localhost/secure/redirect', Redirect::to_route('redirect-3', array(), 302)->headers['location']);
+		$this->assertEquals('http://localhost/redirect/1/2', Redirect::to_route('redirect-2', array('1', '2'))->headers['location']);
 	}
 
 	/**

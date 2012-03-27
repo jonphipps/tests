@@ -8,7 +8,7 @@ class ViewTest extends PHPUnit_Framework_TestCase {
 	public function tearDown()
 	{
 		View::$shared = array();
-		Event::$events = array();
+		unset(Event::$events['composing: test.basic']);
 	}
 
 	/**
