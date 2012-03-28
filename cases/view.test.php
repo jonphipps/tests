@@ -42,7 +42,7 @@ class ViewTest extends PHPUnit_Framework_TestCase {
 	{
 		$view = new View('home.index');
 
-		$this->assertEquals(path('app').'views/home/index.php', $view->path);
+		$this->assertEquals(path('app').'views' . DIRECTORY_SEPARATOR . 'home' . DIRECTORY_SEPARATOR . 'index.php', $view->path);
 	}
 
 	/**
