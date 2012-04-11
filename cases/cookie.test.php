@@ -122,7 +122,7 @@ class CookieTest extends \PHPUnit_Framework_TestCase {
 		Cookie::send();
 		$this->assertTrue(count($_SERVER['cookie.stub']) == 0);
 
-		Cookie::put('foo', 'bar', 20, 'path', 'domain', true);
+		Cookie::put('foo', 'bar', 20, 'path', 'domain', false);
 		Cookie::send();
 		$this->assertTrue(count($_SERVER['cookie.stub']) == 1);
 		$this->assertEquals('foo', $_SERVER['cookie.stub']['foo']['name']);
@@ -130,7 +130,7 @@ class CookieTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals('path', $_SERVER['cookie.stub']['foo']['path']);
 		$this->assertEquals('domain', $_SERVER['cookie.stub']['foo']['domain']);
 		$this->assertEquals((time() + (20 * 60)), $_SERVER['cookie.stub']['foo']['time']);
-		$this->assertTrue($_SERVER['cookie.stub']['foo']['secure']);
+		$this->assertFalse($_SERVER['cookie.stub']['foo']['secure']);
 
 		Cookie::put('bar', 'baz', 0);
 		Cookie::send();
